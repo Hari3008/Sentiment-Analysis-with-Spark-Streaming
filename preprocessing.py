@@ -3,15 +3,26 @@ from pyspark.streaming import StreamingContext
 from pyspark.sql import SQLContext
 from pyspark.sql import SparkSession
 import sys
+import json
 #sc = SparkContext(master, appName)
-spark = SparkContext.getOrCreate()
-ssc = StreamingContext(spark,2)
+def getTweets(rdd):
+	
+	x = rdd.collect()
+	if(len(x)>0):
+		df = spark.createDataFrame(json.loads(x[0]).values() , schema = ["sentiment_value" , "tweet"]) #creates the dataframe
+		df.show(truncate=False)
+		#print(json.loads(x[0]).values())
+	
+if __name__ == "__main__":
+	
+	spark = SparkSession.builder.master("local[2]").appName('GetTweet').getOrCreate()
+	ssc = StreamingContext(spark.sparkContext,1)
+	sqlContext = SQLContext(spark)
 #lines = spark.readStream.format("socket").option("host","localhost").option("port", 6100).load()
 #sqlContext = SQLContext(spark)
-lines = ssc.socketTextStream("localhost",6100)
-words = lines.flatMap(lambda line: line.split(" "))
-pairs = words.map(lambda word: (word, 1))
-wordCounts = pairs.reduceByKey(lambda x, y: x + y)
-wordCounts.pprint()
-ssc.start() # Start the computation
-ssc.awaitTermination()
+	lines = ssc.socketTextStream("localhost",6100)
+	words = lines.flatMap(lambda line: line.split("\n"))
+	words.foreachRDD(getTweets)
+	
+	ssc.start() # Start the computation
+	ssc.awaitTermination()
