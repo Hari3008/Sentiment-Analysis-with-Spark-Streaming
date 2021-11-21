@@ -6,9 +6,7 @@ from pyspark.sql.functions import udf, col, lower, regexp_replace
 from pyspark.ml.feature import Tokenizer, StopWordsRemover
 from nltk.stem.snowball import SnowballStemmer
 from pyspark.sql.types import *
-spark = SparkSession.builder\
-        .master("local[2]")\
-        .getOrCreate()
+spark = SparkSession.builder.master("local[2]").getOrCreate()
 df = spark.read.csv("test.csv", header=True,inferSchema='True')
 text_col = 'Tweet'
 Tweet = df.select(text_col).filter(F.col(text_col).isNotNull())
