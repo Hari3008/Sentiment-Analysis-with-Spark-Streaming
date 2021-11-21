@@ -7,9 +7,7 @@ from pyspark.ml.feature import Tokenizer, StopWordsRemover
 from nltk.stem.snowball import SnowballStemmer
 from pyspark.sql.types import *
 spark = SparkSession.builder\
-        .master("local")\
-        .appName("Colab")\
-        .config('spark.ui.port', '4050')\
+        .master("local[2]")\
         .getOrCreate()
 df = spark.read.csv("test.csv", header=True,inferSchema='True')
 text_col = 'Tweet'
