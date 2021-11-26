@@ -6,6 +6,7 @@ from pyspark.sql.functions import udf, col, lower, regexp_replace
 from pyspark.ml.feature import Tokenizer, StopWordsRemover
 from nltk.stem.snowball import SnowballStemmer
 from pyspark.sql.types import *
+import re 
 spark = SparkSession.builder.master("local[2]").getOrCreate()
 df = spark.read.csv("test.csv", header=True,inferSchema='True')
 text_col = 'Tweet'
@@ -23,3 +24,8 @@ stemmer = SnowballStemmer(language='english')
 stemmer_udf = udf(lambda tokens: [stemmer.stem(token) for token in tokens], ArrayType(StringType()))
 df_stemmed = df_cleaned.withColumn("Stemmed_Tweets", stemmer_udf("Clean_Tweets")).select('Sentiment', 'Stemmed_Tweets')
 #df_stemmed.show(truncate=False)
+#words=['u','ur']
+#clean = filter(lambda word: word not in words,df_stemmed('Stemmed_Tweets')) 
+#lemmatize text
+lemmatizer = Lemmatizer(inputCol='Stemmed_Tweets', outputCol='Lemm_Tweets',) 
+df_lemm = lemmatizer.transform(df_stemmed).select('Sentiment','Lemm_Tweets')
