@@ -9,6 +9,8 @@ from pyspark.sql.types import *
 import re 
 spark = SparkSession.builder.master("local[2]").getOrCreate()
 df = spark.read.csv("test.csv", header=True,inferSchema='True')
+df = df.withColumn("Tweet" , regexp_replace("Tweet" , r"http\S+", ""))
+df = df.withColumn("Tweet" , regexp_replace("Tweet" , r"@\S+", ""))
 text_col = 'Tweet'
 Tweet = df.select(text_col).filter(F.col(text_col).isNotNull())
 # Clean text
@@ -23,9 +25,5 @@ df_cleaned = remover.transform(df_words_token).select('Sentiment', 'Clean_Tweets
 stemmer = SnowballStemmer(language='english')
 stemmer_udf = udf(lambda tokens: [stemmer.stem(token) for token in tokens], ArrayType(StringType()))
 df_stemmed = df_cleaned.withColumn("Stemmed_Tweets", stemmer_udf("Clean_Tweets")).select('Sentiment', 'Stemmed_Tweets')
-#df_stemmed.show(truncate=False)
-#words=['u','ur']
-#clean = filter(lambda word: word not in words,df_stemmed('Stemmed_Tweets')) 
-#lemmatize text
-lemmatizer = Lemmatizer(inputCol='Stemmed_Tweets', outputCol='Lemm_Tweets',) 
-df_lemm = lemmatizer.transform(df_stemmed).select('Sentiment','Lemm_Tweets')
+filter_length_udf = udf(lambda row: [x for x in row if len(x) >= 3], ArrayType(StringType()))
+df_final_words = df_stemmed.withColumn('Final_tweets', filter_length_udf(col('Stemmed_Tweets'))).select('Sentiment', 'Final_tweets')
