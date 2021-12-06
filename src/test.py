@@ -55,7 +55,9 @@ def removeall(text):
 
 def test_model(test_df):
 	filename = 'Bernoulli_model.sav'
+	filenamek = 'Bernoulli_model_Kmeans.sav'
 	model = pickle.load(open(filename,'rb'))
+	kmodel = pickle.load(open(filenamek,'rb'))
 	X=test_df.select('Final_Tweets').collect()
 	X=[i['Final_Tweets'] for i in X]
 	
@@ -63,7 +65,7 @@ def test_model(test_df):
 	X = vectorizer.fit_transform(X)
 	y=test_df.select('Sentiment').collect()
 	y=np.array([i[0] for i in np.array(y)])
-	
+	y_pred = kmodel.predict(X)
 	pred1 = model.predict(X)
 	ac1 = accuracy_score(y, pred1)
 	prec1 = precision_score(y, pred1,pos_label=4)
@@ -79,8 +81,11 @@ def test_model(test_df):
 	print("Confusion Matrix: \n", conf_matrix1)
 	
 	filename = 'Perceptron_Model.sav'
+	filenamek = 'Perceptron_Model_Kmeans.sav'
 	model2 = pickle.load(open(filename,'rb'))
+	kmodel2 = pickle.load(open(filenamek,'rb'))
 	pred2 = model2.predict(X)
+	y_pred2 = kmodel2.predict(X)
 	ac2 = accuracy_score(y, pred2)
 	prec2 = precision_score(y, pred2,pos_label=4)
 	f12 = f1_score(y,pred2,pos_label=4)
@@ -95,8 +100,11 @@ def test_model(test_df):
 	print("Confusion Matrix: \n", conf_matrix2)
 	
 	filename = 'SGD_Classifier.sav'
+	filenamek = 'SGD_Classifier_Kmeans.sav'
+	kmodel3 = pickle.load(open(filenamek,'rb'))
 	model3 = pickle.load(open(filename,'rb'))
 	pred3 = model3.predict(X)
+	y_pred3 = kmodel3.predict(X)
 	ac3 = accuracy_score(y, pred3)
 	prec3 = precision_score(y, pred3,pos_label=4)
 	f13 = f1_score(y,pred3,pos_label=4)
