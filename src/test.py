@@ -77,6 +77,38 @@ def test_model(test_df):
 	print("F1 Score: ", f11)
 	print("Recall Score: ", rec1)
 	print("Confusion Matrix: \n", conf_matrix1)
+	
+	filename = 'Perceptron_Model.sav'
+	model2 = pickle.load(open(filename,'rb'))
+	pred2 = model2.predict(X)
+	ac2 = accuracy_score(y, pred2)
+	prec2 = precision_score(y, pred2,pos_label=4)
+	f12 = f1_score(y,pred2,pos_label=4)
+	rec2 = recall_score(y, pred2,pos_label=4)
+	conf_matrix2 = confusion_matrix(y, pred2)
+
+	print("------------------Perceptron MODEL-----------------")
+	print("Accuracy Score: ", ac2)
+	print("Precision Score: ", prec2)
+	print("F1 Score: ", f12)
+	print("Recall Score: ", rec2)
+	print("Confusion Matrix: \n", conf_matrix2)
+	
+	filename = 'SGD_Classifier.sav'
+	model3 = pickle.load(open(filename,'rb'))
+	pred3 = model3.predict(X)
+	ac3 = accuracy_score(y, pred3)
+	prec3 = precision_score(y, pred3,pos_label=4)
+	f13 = f1_score(y,pred3,pos_label=4)
+	rec3 = recall_score(y, pred3,pos_label=4)
+	conf_matrix3 = confusion_matrix(y, pred3)
+
+	print("------------------SGDClassifier MODEL-----------------")
+	print("Accuracy Score: ", ac3)
+	print("Precision Score: ", prec3)
+	print("F1 Score: ", f13)
+	print("Recall Score: ", rec3)
+	print("Confusion Matrix: \n", conf_matrix3)
 
 if __name__ == "__main__":
 	
