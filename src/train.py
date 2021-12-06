@@ -13,6 +13,7 @@ from sklearn.linear_model import SGDClassifier,Perceptron
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix,f1_score
+from sklearn.cluster import MiniBatchKMeans
 import sys
 import json
 import pickle
@@ -77,6 +78,8 @@ def train_models(train_df):
 	f11 = f1_score(y_test,pred1,pos_label=4)
 	rec1 = recall_score(y_test, pred1,pos_label=4)
 	conf_matrix1 = confusion_matrix(y_test, pred1)
+	kmeans = MiniBatchKMeans(n_clusters=2, random_state=0, batch_size=6)
+	kmodel = kmeans.fit(X_train)
 
 	print("------------------BernoulliNB MODEL-----------------")
 	print("Accuracy Score: ", ac1)
@@ -86,6 +89,8 @@ def train_models(train_df):
 	print("Confusion Matrix: \n", conf_matrix1)
 	filename = 'Bernoulli_model.sav'
 	pickle.dump(model,open(filename,'wb'))
+	filenamek = 'Bernoulli_model_Kmeans.sav'
+	pickle.dump(kmodel,open(filenamek,'wb'))
 	
 	#Perceptron Classifier
 	model2 = clf2.partial_fit(X_train.toarray(), y_train, classes = np.unique(y_train))
@@ -95,6 +100,8 @@ def train_models(train_df):
 	prec2 = precision_score(y_test, pred2,pos_label=4)
 	rec2 = recall_score(y_test, pred2,pos_label=4)
 	conf_matrix2 = confusion_matrix(y_test, pred2)
+	kmeans2 = MiniBatchKMeans(n_clusters=2, random_state=0, batch_size=6)
+	kmodel2 = kmeans2.fit(X_train)
 
 	print("------------------Perceptron MODEL-----------------")
 	print("Accuracy Score: ", ac2)
@@ -104,6 +111,8 @@ def train_models(train_df):
 	print("Confusion Matrix: \n", conf_matrix2)
 	filename = 'Perceptron_Model.sav'
 	pickle.dump(model2,open(filename,'wb'))
+	filenamek = 'Perceptron_Model_Kmeans.sav'
+	pickle.dump(kmodel2,open(filenamek,'wb'))
 	
 	#SGD Classifier
 	model3 = clf3.partial_fit(X_train.toarray(), y_train, classes = np.unique(y_train))
@@ -113,6 +122,8 @@ def train_models(train_df):
 	prec3 = precision_score(y_test, pred3,pos_label=4)
 	rec3 = recall_score(y_test, pred3,pos_label=4)
 	conf_matrix3 = confusion_matrix(y_test, pred3)
+	kmeans3 = MiniBatchKMeans(n_clusters=2, random_state=0, batch_size=6)
+	kmodel3 = kmeans3.fit(X_train)
 
 	print("------------------SGD Classifier MODEL-----------------")
 	print("Accuracy Score: ", ac3)
@@ -122,6 +133,8 @@ def train_models(train_df):
 	print("Confusion Matrix: \n", conf_matrix3)
 	filename = 'SGD_Classifier.sav'
 	pickle.dump(model3,open(filename,'wb'))
+	filenamek = 'SGD_Classifier_Kmeans.sav'
+	pickle.dump(kmodel3,open(filenamek,'wb'))
 	
 	
 if __name__ == "__main__":
